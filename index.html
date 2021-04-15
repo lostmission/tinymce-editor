@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>TinyMCE Editor</title>
+</head>
+<body style="padding:0;margin:0;">
+<div id="editor" style=""></div>
+<script src="./tinymce/jquery.min.js"></script>
+<script src="./tinymce/tinymce.min.js"></script>
+<script>
+    var editor = null
+    $(function () {
+        tinymce.init({
+            setup: function (editor) {
+                window.editor = editor;
+                $(window).on('resize',function(){
+                    editor.settings.height = $(window).height();
+                    editor.settings.min_height = $(window).height();
+                });
+            },
+            selector: '#editor',
+            language: 'zh_CN',
+            plugins: 'print preview searchreplace autolink directionality visualblocks visualchars image link media template code codesample table charmap hr pagebreak nonbreaking anchor insertdatetime advlist lists wordcount imagetools textpattern help emoticons autosave autoresize formatpainter',
+            toolbar: 'code undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor | alignleft aligncenter alignright alignjustify outdent indent styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | table image media charmap emoticons hr pagebreak insertdatetime print preview | lineheight formatpainter',
+            height: $(window).height(),
+            min_height: $(window).height(),
+            fontsize_formats: '12px 14px 16px 18px 24px 36px 48px 56px 72px',
+            font_formats: '微软雅黑=Microsoft YaHei,Helvetica Neue,PingFang SC,sans-serif;苹果苹方=PingFang SC,Microsoft YaHei,sans-serif;宋体=simsun,serif;仿宋体=FangSong,serif;黑体=SimHei,sans-serif;Arial=arial,helvetica,sans-serif;Arial Black=arial black,avant garde;Book Antiqua=book antiqua,palatino;',
+            link_list: [
+                {title: '预置链接1', value: 'http://www.tinymce.com'},
+                {title: '预置链接2', value: 'http://tinymce.ax-z.cn'}
+            ],
+            image_list: [
+                {title: '预置图片1', value: 'https://www.tiny.cloud/images/glyph-tinymce@2x.png'},
+                {title: '预置图片2', value: 'https://www.baidu.com/img/bd_logo1.png'}
+            ],
+            image_class_list: [
+                {title: 'None', value: ''},
+                {title: 'Some class', value: 'class-name'}
+            ],
+            importcss_append: true,
+            file_picker_callback: function (callback, value, meta) {
+                var category = meta.filetype;
+                switch (meta.filetype) {
+                    case 'file':
+                    case 'image':
+                        break;
+                    case 'media':
+                        category = 'video';
+                        break;
+                }
+                parent.__selectorDialog = new parent.api.selectorDialog({
+                    server: parent.__selectorDialogServer + '/' + category,
+                    callback: function (items) {
+                        switch (category) {
+                            case 'file':
+                                for (var i = 0; i < items.length; i++) {
+                                    callback(items[i].path, {text: items[i].filename});
+                                }
+                                break;
+                            case 'image':
+                                for (var i = 0; i < items.length; i++) {
+                                    callback(items[i].path, {alt: items[i].filename});
+                                }
+                                break;
+                            case 'video':
+                                for (var i = 0; i < items.length; i++) {
+                                    callback(items[i].path, {source2: '', poster: ''});
+                                }
+                                break;
+                        }
+                    }
+                }).show();
+            },
+            toolbar_sticky: true,
+            autosave_ask_before_unload: false,
+        });
+    })
+    window.initEditor = function () {
+        console.log('richEditor.initEditor');
+        if (!editor) {
+            setTimeout(function () {
+                window.initEditor();
+            }, 100);
+            return;
+        }
+        editor.on("change", function(e){
+            console.log('richEditor.editor.content.change');
+            window.doEditorUpdate();
+        });
+    };
+    window.getEditorContent = function () {
+        console.log('richEditor.getEditorContent');
+        if (!editor) {
+            return null;
+        }
+        return editor.getContent();
+    };
+    window.setEditorContent = function (content) {
+        console.log('richEditor.setEditorContent', content);
+        if (!editor) {
+            return;
+        }
+        editor.setContent(content);
+    };
+</script>
+</body>
+</html>
