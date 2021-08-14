@@ -16,6 +16,8 @@
 
 - doEditorUpdate
 
+3 优化Plugins，统一打包到 plugins.all.min.js ，提升加载速度
+
 ## LICENSE
 
 查看 LICENSE 文件

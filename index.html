@@ -11,21 +11,29 @@
 <div id="editor" style=""></div>
 <script src="./tinymce/jquery.min.js"></script>
 <script src="./tinymce/tinymce.min.js"></script>
+<script src="./tinymce/plugins.all.min.js"></script>
 <script>
     var editor = null
     $(function () {
         tinymce.init({
             setup: function (editor) {
                 window.editor = editor;
-                $(window).on('resize',function(){
+                $(window).on('resize', function () {
                     editor.settings.height = $(window).height();
                     editor.settings.min_height = $(window).height();
                 });
             },
+            save_onsavecallback: function () {
+                window.doEditorSave();
+            },
+            branding: false,
+            menubar:false,
             selector: '#editor',
             language: 'zh_CN',
-            plugins: 'print preview searchreplace autolink directionality visualblocks visualchars image link media template code codesample table charmap hr pagebreak nonbreaking anchor insertdatetime advlist lists wordcount imagetools textpattern help emoticons autosave autoresize formatpainter',
-            toolbar: 'code undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor | alignleft aligncenter alignright alignjustify outdent indent styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | table image media charmap emoticons hr pagebreak insertdatetime print preview | lineheight formatpainter',
+            plugins: 'save searchreplace autolink directionality visualblocks visualchars image link media code codesample table charmap hr nonbreaking advlist lists wordcount imagetools textpattern emoticons autosave autoresize formatpainter',
+            toolbar: [
+                'code undo redo restoredraft | cut copy paste pastetext formatpainter | forecolor backcolor bold italic underline strikethrough link | alignleft aligncenter alignright alignjustify outdent indent lineheight | bullist numlist | blockquote subscript superscript removeformat | charmap emoticons hr | table image media | styleselect formatselect | fontselect fontsizeselect',
+            ],
             height: $(window).height(),
             min_height: $(window).height(),
             fontsize_formats: '12px 14px 16px 18px 24px 36px 48px 56px 72px',
@@ -88,7 +96,7 @@
             }, 100);
             return;
         }
-        editor.on("change", function(e){
+        editor.on("change", function (e) {
             console.log('richEditor.editor.content.change');
             window.doEditorUpdate();
         });
